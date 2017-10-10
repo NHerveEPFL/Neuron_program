@@ -1,38 +1,44 @@
 #include <iostream>
 #include "Neuron.cpp"
+#include <fstream>
+
 
 
 int main()
 {
-	Neuron test;
 	
-	test.setMembrane_potential(-70.0);
-	std::cout << "The membrane potential has a value of " <<
-				 test.getMembrane_potential() << std::endl;
-				 
-	std::cout << "The number of spikes is alreaddy at "
-				<< test.getNumber_spikes() << std::endl;
-				 
-	for(int i(0); i<=10; ++i)
+	Neuron jimmy;
+	size_t t_stop(500);
+	double I(1.5);
+	size_t step_time(1);
+	bool S(false);
+	
+	std::ofstream out;
+	out.open("neuronTest.txt");
+	
+	for ( size_t time=0; time<t_stop; ++time)
 	{
-		test.addSpike();
-		test.addTime_spike(i);
+/** does a update and return true if a spike occured */
+		std::cout << "Time = " << time << " , V_ = ";
+		S = jimmy.update(I, step_time);
+		out << jimmy.getMembrane_potential() << std::endl;
+
 	}
 	
-	std::cout << "There is a total of " << test.getNumber_spikes()
-				<< " spikes in this experiment" << std::endl;
-				
-				
-	for(size_t i(0); i<test.getTimes_spikes().size(); ++i)
-	{
-		std::cout << "spike number " << i+1 << " ->  at "
-					<< test.getTimes_spikes()[i] << " secondes"
-					<< std::endl;
-	}
-	
-	
+	std::cout << std::endl << "conclusion:  Number of spikes = "
+			<< jimmy.getNumber_spikes() << std::endl;
+			
+	out.close();
 	
 	return 0;
 }
 			
-			
+
+	
+	
+	
+	
+	
+	
+	
+	
