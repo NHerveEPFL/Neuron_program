@@ -9,7 +9,7 @@ int main()
 /* the test creats a Neuron, a Input current I and a time stop that indicates
 when to end the experiment aswell as a step time */
 	Neuron jimmy;
-	size_t t_stop(500);
+	size_t t_stop(5000);
 	double I(1.5);
 	size_t step_time(1);
 	bool S(false);

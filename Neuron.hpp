@@ -48,9 +48,11 @@ private:
 
 
 /* weight send by this neuron when a spike occures */
-	double J_ = 15;
+	double J_ = 0.4;
+	size_t D_ = 5;
 
-
+/* vector that memorizes delayed signals */
+	std::vector<double> Delayed_weights_;
 
 
 
@@ -61,11 +63,15 @@ private:
 //--------------------- modules --------------------------
 
 
+/* return a delayed signal from Delayed_weights_, returns 0 if there is none */
+	double Delayed_signal();
+
 
 
 public:
 
 	Neuron();
+	Neuron(double V);
 
 	double getMembrane_potential() const;
 	void setMembrane_potential(const double& V);
@@ -81,6 +87,14 @@ public:
 	bool update(const double& Input_current, const int& step_time);
 
 	double getWeight() const;
+	size_t getDelay() const;
+
+	void addDelayed_weight(double J, size_t Delay);
+
+	double getDelayed_weight(size_t position) const;
+
+
+
 
 
 };
