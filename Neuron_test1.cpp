@@ -10,7 +10,7 @@ int main()
 when to end the experiment aswell as a step time */
 	Neuron jimmy;
 	size_t t_stop(5000);
-	double I(1.5);
+	double I(1.1);
 	size_t step_time(1);
 	bool S(false);
 
@@ -21,12 +21,12 @@ when to end the experiment aswell as a step time */
 	{
 /** does a update and return true if a spike occured */
 		S = jimmy.update(I, step_time);
-		out << jimmy.getMembrane_potential() << std::endl;
+		out << jimmy.getPot() << std::endl;
 
 	}
 
 	std::cout << std::endl << "conclusion:  Number of spikes = "
-			<< jimmy.getNumber_spikes() << std::endl;
+			<< jimmy.getSpikes() << std::endl;
 
 	out.close();
 
