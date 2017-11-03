@@ -1,7 +1,7 @@
 #ifndef NEURON_HPP
 #define NEURON_HPP
 #include <vector>
-
+#include <cmath>
 
 
 class Neuron
@@ -31,7 +31,7 @@ private:
 
 
 /* weight send by this neuron when a spike occures */
-	const double J_ = 0.4;
+	const double J_ = 0.1;
 /* delay at which the signal will arrive */
 	const unsigned long D_ = 15;
 
@@ -42,27 +42,33 @@ private:
 	const int T_ref_ = 20;   //->in [0.1 * ms] this is thus 2 ms
 
 
+
+const double C1_ = exp(-h_/Tau_);
+const double C2_ = R_*(1-exp(-h_/Tau_));
+
+
 /* a spike is created each time the Membrane_potential_ reaches the
  Firing_treshold, Number_spikes_ counts the number of spikes that occure */
 	int Number_spikes_;
 
+/*counter that checks the refractory state (Ref_ > 0) = Ref state*/
 	int Ref_;
 
 
 /* each moment a spike occure will be labeled by this vector */
-	std::vector <int> Times_spikes_;
+	std::vector <double> Times_spikes_;
 
 
 /* keeps track of time inside the neuron */
-	int Neuron_clock_;  // -> in ms
+	int Neuron_clock_;  // -> in step value (real time = clock*h_)
 
 
 /* vector that memorizes delayed signals */
 	std::vector<double> Delayed_weights_;
 
 
-
-
+/* list of target neurons */
+	std::vector<int> Targets_;
 
 
 
@@ -85,15 +91,16 @@ public:
 	int getSpikes() const;
 	void addSpike();
 
-	int getNeuron_clock() const;
+/* returns real time value of Neuron_clock_ (in ms) */
+	double getNeuron_clock() const;
 
-	std::vector <int> getTimes_spikes() const;
-	void addTime_spike(const unsigned long& time);
+	std::vector <double> getTimes_spikes() const;
+	void addTime_spike(const double& time);
 
 
 /** update the membrane potential at all time
 @param I : input current */
-	bool update(const double& I, const unsigned int& step_time);
+	bool update(const double& I, int poisson);
 
 	double getWeight() const;
 	size_t getDelay() const;
@@ -106,8 +113,13 @@ public:
 
 /*Normaly I don't need to use Delayed_weights_ in the main so I can put this
 module inside the private part - see test2*/
-/* return a delayed signal from Delayed_weights_, returns 0 if there is none */
+/* return a delayed signal from Delayed_weights_, returns 0 if there is none
+and clears the value once it is used */
 	double Delayed_signal();
+
+	void connect(const int& target);
+
+ 	std::vector <int> getTargets() const;
 
 
 };

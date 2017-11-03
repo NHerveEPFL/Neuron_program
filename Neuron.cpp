@@ -1,13 +1,16 @@
 #include "Neuron.hpp"
 #include <vector>
-#include <cmath>
 #include <iostream>
+#include <random>
+
 
 
 /* maximum delay possible = 100 */
 Neuron::Neuron()
-:V_(0.0), Number_spikes_(0), Delayed_weights_(D_+1, 0.0)
-{}
+:V_(0.0), Number_spikes_(0), Ref_(0), Delayed_weights_(D_+1, 0.0)
+{
+	Neuron_clock_ = 0;
+}
 
 Neuron::Neuron(double V)
 :V_(V), Number_spikes_(0), Delayed_weights_(10,0)
@@ -28,10 +31,10 @@ void Neuron::addSpike()
 { ++ Number_spikes_; }
 
 
-std::vector<int> Neuron::getTimes_spikes() const
+std::vector<double> Neuron::getTimes_spikes() const
 { return Times_spikes_; }
 
-void Neuron::addTime_spike(const unsigned long& time)
+void Neuron::addTime_spike(const double& time)
 { Times_spikes_.push_back(time); }
 
 
@@ -41,8 +44,8 @@ double Neuron::getWeight() const
 size_t Neuron::getDelay() const
 { return D_; }
 
-int Neuron::getNeuron_clock() const
-{ return Neuron_clock_; }
+double Neuron::getNeuron_clock() const
+{ return Neuron_clock_*h_; }
 
 double Neuron::getDelayed_weight(size_t position) const
 { return Delayed_weights_[position%Delayed_weights_.size()]; }
@@ -52,12 +55,11 @@ void Neuron::addDelayed_weight
 (const double& J, const unsigned long& D, const unsigned long& time)
 {
 	size_t position = (time+D) % Delayed_weights_.size();
-
 	Delayed_weights_[position] += J;
 }
 
 
-bool Neuron::update(const double& I, const unsigned int& step_time)
+bool Neuron::update(const double& I, int poisson)
 {
 	bool spike(false);
 
@@ -71,92 +73,21 @@ reinitializing V_ (thus the signal is lost)*/
 		-- Ref_;
 	}
 
-	/*if (Times_spikes_.empty())
-	{
-		if (V_ < V_thr_)
-		{
-			V_ = exp(step_time*(-h_)/Tau_)*V_
-					+ I*R_*(1-exp(step_time*(-h_)/Tau_))
-					+ Delayed_signal();
-
-
-			Neuron_clock_+= step_time;
-
-			return false;
-		}*/
-		else
-		{
-			V_ = exp(step_time*(-h_)/Tau_)*V_
-					+ I*R_*(1-exp(step_time*(-h_)/Tau_))
-					+ Delayed_signal();
-		}
-
-		if (V_ > V_thr_)
-		{
-			addSpike();
-			addTime_spike(Neuron_clock_);
-			Ref_ = T_ref_;
-			spike = true;
-		}
-
-	/*	else
-		{
-			addSpike();
-			addTime_spike(Neuron_clock_);
-
-
-
-
-
-			Neuron_clock_+= step_time;
-
-			return true;
-		}
-	}
-
-
-	else if (abs(Times_spikes_.back()-Neuron_clock_) < T_ref_)
+	else
 	{
 
-
-		V_ += Delayed_signal();
-		V_ = V_res_;
-
-		Neuron_clock_+= step_time;
-
-		return false;
+		V_ = C1_*V_ + I*C2_ + Delayed_signal() + poisson*J_;
 	}
-	*/
 
-
-	/*else
+	if (V_ > V_thr_)
 	{
-		if (V_ > V_thr_)
-		{
-			addSpike();
-			addTime_spike(Neuron_clock_);
-
-			V_ += Delayed_signal();
-			V_ = V_res_;
-
-			Neuron_clock_+= step_time;
-
-			return true;
-		}
-
-		else
-		{
-			V_ = exp(step_time*(-h_)/Tau_)*V_
-					+ I*R_*(1-exp(step_time*(-h_)/Tau_))
-					+ Delayed_signal();
-
-			Neuron_clock_+= step_time;
-
-			return false;
-		}
+		addSpike();
+		addTime_spike(getNeuron_clock()+h_);
+		V_ = 0;
+		Ref_ = T_ref_;
+		spike = true;
 	}
 
-	return false;*/
 	++ Neuron_clock_;
 
 	return spike;
@@ -170,13 +101,12 @@ double Neuron::Delayed_signal()
 	double weight (Delayed_weights_[bufferTime]);
 	Delayed_weights_[bufferTime] = 0.0;
 
-/*
-	if (weight > 0.01)
-	{
-		std::cout << "at " << Neuron_clock_*0.1 << " ms, Jimmy receives " << weight
-							<< " from a friendly Neuron" << std::endl;
-	}
-	*/
-
 	return weight;
 }
+
+
+void Neuron::connect(const int& target)
+{	Targets_.push_back(target); }
+
+std::vector <int> Neuron::getTargets() const
+{ return Targets_; }
