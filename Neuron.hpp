@@ -2,6 +2,7 @@
 #define NEURON_HPP
 #include <vector>
 #include <cmath>
+#include <cstddef>  //-> is needed on SV workspace to use size_t
 
 
 class Neuron
