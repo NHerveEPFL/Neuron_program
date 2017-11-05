@@ -37,10 +37,6 @@ std::vector<double> Neuron::getTimes_spikes() const
 void Neuron::addTime_spike(const double& time)
 { Times_spikes_.push_back(time); }
 
-
-double Neuron::getWeight() const
-{ return J_; }
-
 size_t Neuron::getDelay() const
 { return D_; }
 

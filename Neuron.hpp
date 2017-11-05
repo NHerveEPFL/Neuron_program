@@ -44,8 +44,8 @@ private:
 
 
 
-const double C1_ = exp(-h_/Tau_);
-const double C2_ = R_*(1-exp(-h_/Tau_));
+	const double C1_ = exp(-h_/Tau_);
+	const double C2_ = R_*(1-exp(-h_/Tau_));
 
 
 /* a spike is created each time the Membrane_potential_ reaches the
@@ -75,6 +75,10 @@ const double C2_ = R_*(1-exp(-h_/Tau_));
 
 //--------------------- modules --------------------------
 
+/* return a delayed signal from Delayed_weights_, returns 0 if there is none
+and clears the value once it is used */
+
+double Delayed_signal();
 
 
 
@@ -103,7 +107,6 @@ public:
 @param I : input current */
 	bool update(const double& I, int poisson);
 
-	double getWeight() const;
 	size_t getDelay() const;
 
 /* @param J : weight to add (weight = part of Input current)
@@ -112,11 +115,6 @@ public:
 
 	double getDelayed_weight(size_t position) const;
 
-/*Normaly I don't need to use Delayed_weights_ in the main so I can put this
-module inside the private part - see test2*/
-/* return a delayed signal from Delayed_weights_, returns 0 if there is none
-and clears the value once it is used */
-	double Delayed_signal();
 
 	void connect(const int& target);
 

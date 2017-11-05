@@ -43,8 +43,6 @@ public:
 randomly create Ce_ and Ci_ connections between neurons */
   Network();
 
-  Network(int Ne, int Ni);
-
   ~Network();
 
 
@@ -53,7 +51,8 @@ randomly create Ce_ and Ci_ connections between neurons */
 */
   void Interaction(Neuron n, const double& J) const;
 
-  void Simulation(int steps);
+  std::vector<Neuron*> getNeurons();
+  
 };
 
 

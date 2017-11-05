@@ -5,8 +5,8 @@
 
 Network::Network()
 {
-  out_.open("NeuronTest.txt");
-  
+  out_.open("NeuronTest.gdf");
+
   std::random_device rd;  //Will be used to obtain a seed for the random number engine
   gen = std::mt19937(rd());
   d = std::poisson_distribution<unsigned int>(2);
@@ -84,3 +84,6 @@ void Network::update(const double& I)
   //std::cout << Neurons_[2567]->getSpikes() << " "<< std::flush;
 
 }
+
+std::vector<Neuron*> Network::getNeurons()
+{ return Neurons_; }

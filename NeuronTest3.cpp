@@ -6,7 +6,7 @@ int main()
 
   Network myBrain; //-> default network creation
 
-  for(int i(0); i < 10000; ++i)
+  for(int i(0); i < 2000; ++i)
   {
     myBrain.update(0.0);
   }
